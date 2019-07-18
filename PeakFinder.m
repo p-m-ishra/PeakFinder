@@ -1,6 +1,8 @@
 data = csvread("c1278-rest-pump-on.csv");
-REQUIREMENTFORLOCALMAX = 0.00059;
-USERESTIMATEFORMAXIMA = 21;
+#data = csvread("exercise pump on.csv");
+REQUIREMENTFORLOCALMAX = 0.00059; #how high must a peak be to be a local max
+USERESTIMATEFORMAXIMA = 20; #how many maxima (software check)
+INTERVALTOCHECKFORMINIMA = 20; #how far right of the maxima should the algorithm check for minima
 
 [peakVal, peakLoc] = findpeaks(data,"DoubleSided", "MinPeakDistance", 3);
 LocalMaxInterval = [];
@@ -23,8 +25,8 @@ iterator = 1;
 lowerbound = 0;
 upperbound = 0;
 while(!(upperbound>length(data)) && !(iterator>length(LocalMaxInterval)))
-  lowerbound = LocalMaxInterval(iterator)-0; # CHANGE to -10 IF LOCAL MINIMA OCCURS BEFORE LOCAL MAXIMA
-  upperbound = LocalMaxInterval(iterator) +10;
+  lowerbound = LocalMaxInterval(iterator)-0;
+  upperbound = LocalMaxInterval(iterator) +20;
   if(upperbound >length(data))
     upperbound = length(data);
   end
@@ -33,17 +35,35 @@ while(!(upperbound>length(data)) && !(iterator>length(LocalMaxInterval)))
       interval(index) = data(i);
       index = index +1;
   end
-  LocalMinima(localminimacount) = min(interval);
-  LocalMaxima(localmaximacount) = max(interval);
+  TempMinimum = min(interval);
+  TempMaximum = max(interval);
   for i = lowerbound: upperbound
-    if(data(i) == LocalMinima(localminimacount))
-      LocalMinimaPeakLoc(localminimacount) = i;
-    elseif(data(i) == LocalMaxima(localmaximacount))
-      LocalMaximaPeakLoc(localmaximacount) = i;
+    if(data(i) == TempMinimum)
+      if(localminimacount > 1)
+        if(abs(i-LocalMinimaPeakLoc(localminimacount-1)) > 60)
+          LocalMinima(localminimacount) = min(interval);
+          LocalMinimaPeakLoc(localminimacount) = i;
+          localminimacount = localminimacount + 1;
+        end
+      else
+        LocalMinima(localminimacount) = min(interval);
+        LocalMinimaPeakLoc(localminimacount) = i;
+        localminimacount = localminimacount +1;
+      end
+    elseif(data(i) == TempMaximum)
+      if(localmaximacount > 1)
+        if(abs(i - LocalMaximaPeakLoc(localmaximacount-1)) > 60)
+          LocalMaxima(localmaximacount) = max(interval);
+          LocalMaximaPeakLoc(localmaximacount) = i;
+          localmaximacount = localmaximacount + 1;
+        end
+      else
+        LocalMaxima(localmaximacount) = max(interval);
+        LocalMaximaPeakLoc(localmaximacount) = i;
+        localmaximacount = localmaximacount + 1;
+      end
     end
   end
-  localmaximacount = localmaximacount + 1;
-  localminimacount = localminimacount + 1;
 
   index = 1;
   interval = [];
