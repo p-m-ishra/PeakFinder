@@ -1,9 +1,8 @@
-data = csvread("c1278-rest-pump-on.csv");
-#data = csvread("exercise pump on.csv");
 REQUIREMENTFORLOCALMAX = 0.00059; #how high must a peak be to be a local max
 USERESTIMATEFORMAXIMA = 20; #how many maxima (software check)
 INTERVALTOCHECKFORMINIMA = 20; #how far right of the maxima should the algorithm check for minima
-
+FILENAME = "c1278-rest-pump-on.csv"
+data = csvread(FILENAME);
 [peakVal, peakLoc] = findpeaks(data,"DoubleSided", "MinPeakDistance", 3);
 LocalMaxInterval = [];
 localmaxintervalcount = 1;
@@ -94,6 +93,13 @@ end
 for i =1:length(LocalMaxima)
   scatter(LocalMaximaPeakLoc(i), LocalMaxima(i), 280);
 end
-hold off
-%}
+hold off  
+LocalMinimaStats = [mean(LocalMinima) std(LocalMinima)];
+LocalMaximaStats = [mean(LocalMaxima) std(LocalMaxima)];
 
+dlmwrite("Results.csv", "LocalMinimaList, Avg,and Standard Deviation <-- in that order");
+dlmwrite("Results.csv", LocalMinima, '-append');
+dlmwrite("Results.csv", LocalMinimaStats, '-append');
+dlmwrite("Results.csv", "LocalMaximaList, Avg,and Standard Deviation <-- in that order", '-append');
+dlmwrite("Results.csv", LocalMaxima, '-append');
+dlmwrite("Results.csv", LocalMaximaStats, '-append');
