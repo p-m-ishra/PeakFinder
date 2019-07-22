@@ -1,6 +1,6 @@
 REQUIREMENTFORLOCALMAX = 20; #how high must a peak be to be a local max
 USERESTIMATEFORMAXIMA = 20; #how many maxima (software check)
-INTERVALTOCHECKFORMINIMA = 20; #how far right of the maxima should the algorithm check for minima
+INTERVALTOCHECKFORMINIMA = 10; #how far right of the maxima should the algorithm check for minima
 FILENAMEOFF = "c1278-rest-pump-on.csv";
 FILENAMEP0 = "exerciseP0.csv";
 FILENAMEP1 = "exerciseP1.csv"
@@ -50,7 +50,7 @@ lowerbound = 0;
 upperbound = 0;
 while(!(upperbound>length(finalData)) && !(iterator>length(LocalMaxInterval)))
   lowerbound = LocalMaxInterval(iterator)-0;
-  upperbound = LocalMaxInterval(iterator) +20;
+  upperbound = LocalMaxInterval(iterator) +INTERVALTOCHECKFORMINIMA;
   if(upperbound >length(finalData))
     upperbound = length(finalData);
   end
