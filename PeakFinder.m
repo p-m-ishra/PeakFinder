@@ -1,34 +1,39 @@
-REQUIREMENTFORLOCALMAX = 20; #how high must a peak be to be a local max
-USERESTIMATEFORMAXIMA = 20; #how many maxima (software check)
-INTERVALTOCHECKFORMINIMA = 10; #how far right of the maxima should the algorithm check for minima
-FILENAMEOFF = "c1278-rest-pump-on.csv";
-FILENAMEP0 = "exerciseP0.csv";
-FILENAMEP1 = "exerciseP1.csv"
-dataP1 = csvread(FILENAMEP1);
+REQUIREMENTFORLOCALMAX = 0.0004; #how high must a peak be to be a local max
+USERESTIMATEFORMAXIMA = 21; #how many maxima (software check)
+INTERVALCHECKRIGHT = 20; #how far right of the maxima should the algorithm check for minima
+INTERVALCHECKLEFT = 0; #how far left to check(usually 0)
+HOWFARAPART = 65;
+FILENAMEP0 = "c1278P0.csv";
+FILENAMEP1 = "c1278P1.csv";
+FILENAMEOFFP0 = "c1278P0off.csv";
+FILENAMEOFFP1 = "c1278P1off.csv";
+
 dataP0 = csvread(FILENAMEP0);
-dataOff = csvread(FILENAMEOFF);
-dataOff = sort(dataOff);
-finalData = [];
-for i = 100:(length(dataOff)-100)
-  dataOffFiltered(i-99) = dataOff(i);
+dataP1 = csvread(FILENAMEP1);
+dataOffP0 = csvread(FILENAMEOFFP0);
+dataOffP1 = csvread(FILENAMEOFFP1);
+dataOffP0 = sort(dataOffP0);
+dataOffP1 = sort(dataOffP1);
+dataOffFilteredP0 = [];
+dataOffFilteredP1 = [];
+
+for i = 100:(length(dataOffP0)-100)
+  dataOffFilteredP0(i-99) = dataOffP0(i);
 end
-dataOffFilteredAvg = mean(dataOffFiltered);
-for i = 1:length(dataP1)
-    dataP1(i) = dataP1(i) - dataOffFilteredAvg;
-end
+dataOffFilteredAvgP0 = mean(dataOffFilteredP0);
 for i = 1:length(dataP0)
-    dataP0(i) = dataP0(i) - dataOffFilteredAvg;
+    dataP0(i) = dataP0(i) - dataOffFilteredAvgP0;
 end
-if(mean(dataP0) > mean(dataP1))
-  for i = 1:length(dataP0)
-    finalData(i) = dataP0(i) - dataP1(i);
-  end
-else
-  for i = 1:length(dataP0)
-    finalData(i) = dataP1(i) - dataP0(i);
-  end
+
+for i = 100:(length(dataOffP1) - 100)
+  dataOffFilteredP1(i-99) = dataOffP1(i);
 end
-[peakVal, peakLoc] = findpeaks(finalData,"DoubleSided", "MinPeakDistance", 3);
+dataOffFilteredAvgP1 = mean(dataOffFilteredP1);
+for i = 1:length(dataP1)
+    dataP1(i) = dataP1(i) - dataOffFilteredAvgP1;
+end
+
+[peakVal, peakLoc] = findpeaks(dataP0,"DoubleSided", "MinPeakDistance", 3);
 LocalMaxInterval = [];
 localmaxintervalcount = 1;
 for i = 1:length(peakLoc)
@@ -48,23 +53,23 @@ localminimacount =1;
 iterator = 1;
 lowerbound = 0;
 upperbound = 0;
-while(!(upperbound>length(finalData)) && !(iterator>length(LocalMaxInterval)))
-  lowerbound = LocalMaxInterval(iterator)-0;
-  upperbound = LocalMaxInterval(iterator) +INTERVALTOCHECKFORMINIMA;
-  if(upperbound >length(finalData))
-    upperbound = length(finalData);
+while(!(upperbound>length(dataP0)) && !(iterator>length(LocalMaxInterval)))
+  lowerbound = LocalMaxInterval(iterator)-INTERVALCHECKLEFT;
+  upperbound = LocalMaxInterval(iterator) +INTERVALCHECKRIGHT;
+  if(upperbound >length(dataP0))
+    upperbound = length(dataP0);
   end
   fprintf("lowerbound: %d\t upperbound: %d\n", lowerbound, upperbound);
   for i = lowerbound:upperbound
-      interval(index) = finalData(i);
+      interval(index) = dataP0(i);
       index = index +1;
   end
   TempMinimum = min(interval);
   TempMaximum = max(interval);
   for i = lowerbound: upperbound
-    if(finalData(i) == TempMinimum)
+    if(dataP0(i) == TempMinimum)
       if(localminimacount > 1)
-        if(abs(i-LocalMinimaPeakLoc(localminimacount-1)) > 60)
+        if(abs(i-LocalMinimaPeakLoc(localminimacount-1)) > HOWFARAPART)
           LocalMinima(localminimacount) = min(interval);
           LocalMinimaPeakLoc(localminimacount) = i;
           localminimacount = localminimacount + 1;
@@ -74,9 +79,9 @@ while(!(upperbound>length(finalData)) && !(iterator>length(LocalMaxInterval)))
         LocalMinimaPeakLoc(localminimacount) = i;
         localminimacount = localminimacount +1;
       end
-    elseif(finalData(i) == TempMaximum)
+    elseif(dataP0(i) == TempMaximum)
       if(localmaximacount > 1)
-        if(abs(i - LocalMaximaPeakLoc(localmaximacount-1)) > 60)
+        if(abs(i - LocalMaximaPeakLoc(localmaximacount-1)) > HOWFARAPART)
           LocalMaxima(localmaximacount) = max(interval);
           LocalMaximaPeakLoc(localmaximacount) = i;
           localmaximacount = localmaximacount + 1;
@@ -110,7 +115,7 @@ if(USERESTIMATEFORMAXIMA == length(LocalMaxima))
 else
   fprintf("Software estimate was INCORRECT according to the user estimate, please manually check the data.\n")
 end
-plot(finalData);
+plot(dataP0);
 hold on
 for i = 1:length(LocalMinima)
   scatter(LocalMinimaPeakLoc(i), LocalMinima(i), 280);
