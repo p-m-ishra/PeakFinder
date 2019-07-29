@@ -1,20 +1,21 @@
 #Use Figure 1 for P0 and Figure 2 for P1
-REQUIREMENTFORLOCALMAXP0 = 0.0004; #how high must a peak be to be a local max
-USERESTIMATEFORMAXIMAP0 = 20; #how many maxima (software check)
-INTERVALCHECKRIGHTP0 = 15; #how far right of the maxima should the algorithm check for minima
-INTERVALCHECKLEFTP0 = 0; #how far left to check(usually 0)
-HOWFARAPARTP0 = 65;
+  FILENAMEP0 = "c1278P0.csv";
+  FILENAMEP1 = "c1278P1.csv";
+  FILENAMEOFFP0 = "c1278P0off.csv";
+  FILENAMEOFFP1 = "c1278P1off.csv";
 
-REQUIREMENTFORLOCALMAXP1 = 0.00027; #how high must a peak be to be a local max
-USERESTIMATEFORMAXIMAP1 = 20; #how many maxima (software check)
-INTERVALCHECKRIGHTP1 = 15; #how far right of the maxima should the algorithm check for minima
-INTERVALCHECKLEFTP1 = 0; #how far left to check(usually 0)
-HOWFARAPARTP1 = 65;
+  REQUIREMENTFORLOCALMAXP0 = 0.0004; #how high must a peak be to be a local max
+  USERESTIMATEFORMAXIMAP0 = 20; #how many maxima (software check)
+  INTERVALCHECKRIGHTP0 = 15; #how far right of the maxima should the algorithm check for minima
+  INTERVALCHECKLEFTP0 = 0; #how far left to check(usually 0)
+  HOWFARAPARTP0 = 65;
 
-FILENAMEP0 = "c1278P0.csv";
-FILENAMEP1 = "c1278P1.csv";
-FILENAMEOFFP0 = "c1278P0off.csv";
-FILENAMEOFFP1 = "c1278P1off.csv";
+  REQUIREMENTFORLOCALMAXP1 = 0.00027; #how high must a peak be to be a local max
+  USERESTIMATEFORMAXIMAP1 = 20; #how many maxima (software check)
+  INTERVALCHECKRIGHTP1 = 15; #how far right of the maxima should the algorithm check for minima
+  INTERVALCHECKLEFTP1 = 0; #how far left to check(usually 0)
+  HOWFARAPARTP1 = 65;
+#^^^^^^ User Input ^^^^^^
 
 dataP0 = csvread(FILENAMEP0);
 dataP1 = csvread(FILENAMEP1);
@@ -133,21 +134,26 @@ FinalMinimaAvg = mean(FinalMinima);
 FinalMaximaAvg = mean(FinalMaxima);
 FinalMinimaStd = std(FinalMinima);
 FinalMaximaStd = std(FinalMaxima);
-disp("RESULTS\n");
-disp("LOCAL MINIMA, avg, and stdev <-- in that order\n");
+disp("RESULTS: Mean subtracted from each data value and then Maxima and Minima of P0 and P1 subtracted\n");
+disp("LOCAL MINIMA DIFFERENCES, avg, and stdev <-- in that order\n");
 fprintf('%d\n', FinalMinima);
 fprintf('%s\n%d\n', "Average", FinalMinimaAvg);
 fprintf('%s\n%d\n', "Standard Deviation", FinalMinimaStd);
-disp("LOCAL MAXIMA, avg, and stdev <-- in that order\n");
+disp("LOCAL MAXIMA DIFFERENCES, avg, and stdev <-- in that order\n");
 fprintf('%d\n', FinalMaxima);
 fprintf('%s\n%d\n', "Average", FinalMaximaAvg);
 fprintf('%s\n%d\n', "Standard Deviation", FinalMaximaStd);
+if(USERESTIMATEFORMAXIMAP0 == length(FinalMaxima) && USERESTIMATEFORMAXIMAP1 == length(FinalMaxima))
+  fprintf("\n\n%s\n", "CORRECT SOFTWARE\n");
+else
+  fprintf("\n\n%s\n", "INCORRECT SOFTWARE\n");
+end
 
-dlmwrite("Results.csv", "LocalMinima");
+dlmwrite("Results.csv", "LocalMinimaDifferences");
 dlmwrite("Results.csv", FinalMinima, '-append');
 dlmwrite("Results.csv", FinalMinimaAvg, '-append');
 dlmwrite("Results.csv", FinalMinimaStd, '-append');
-dlmwrite("Results.csv", "LocalMaxima", '-appened');
+dlmwrite("Results.csv", "LocalMaximaDifferences", '-append');
 dlmwrite("Results.csv", FinalMaxima, '-append');
 dlmwrite("Results.csv", FinalMaximaAvg, '-append');
 dlmwrite("Results.csv", FinalMaximaStd, '-append');
