@@ -1,20 +1,42 @@
-#Use Figure 1 for P0 and Figure 2 for P1
+  #Use Figure 1 for P0 and Figure 2 for P1
+  fflush(stdout);
+  
+  disp("Press Ctrl-C to Quit and then type PeakFinder and press enter to restart\n");
+  FILENAMEP0 = input("Type exact filename for P0 on: ", "s"); 
+  FILENAMEP1 = input("Type exact filename for P1 on: ", "s");
+  FILENAMEOFFP0 = input("Type exact filename for P0 off: ", "s");
+  FILENAMEOFFP1 = input("Type exact filename for P1 off: ","s");
+ %{ 
   FILENAMEP0 = "c1278P0.csv";
   FILENAMEP1 = "c1278P1.csv";
   FILENAMEOFFP0 = "c1278P0off.csv";
   FILENAMEOFFP1 = "c1278P1off.csv";
-
+%}
+  REQUIREMENTFORLOCALMAXP0 = input("Requirement for Local Max P0 (how high peak must be to be local max): ");
+  USERESTIMATEFORMAXIMAP0 = input("How many maxima are there (software check) in P0: ");
+  INTERVALCHECKRIGHTP0 = input("How far right of maxima should algorithm check for minima in P0: ");
+  INTERVALCHECKLEFTP0 = 0;
+  HOWFARAPARTP0 = input("How far apart are maxima approximately? (Round down) in P0: ");
+  
+  REQUIREMENTFORLOCALMAXP1 = input("Requirement for Local Max P1 (how high peak must be to be local max): ");
+  USERESTIMATEFORMAXIMAP1 = input("How many maxima are there in P1(software check): ");
+  INTERVALCHECKRIGHTP1 = input("How far right of maxima should algorithm check for minima in P1: ");
+  INTERVALCHECKLEFTP1 = 0;
+  HOWFARAPARTP1 = input("How far apart are maxima approximately in P1? (Round down): ");
+  %{
   REQUIREMENTFORLOCALMAXP0 = 0.0004; #how high must a peak be to be a local max
   USERESTIMATEFORMAXIMAP0 = 20; #how many maxima (software check)
   INTERVALCHECKRIGHTP0 = 15; #how far right of the maxima should the algorithm check for minima
   INTERVALCHECKLEFTP0 = 0; #how far left to check(usually 0)
   HOWFARAPARTP0 = 65;
-
+  %}
+  %{
   REQUIREMENTFORLOCALMAXP1 = 0.00027; #how high must a peak be to be a local max
   USERESTIMATEFORMAXIMAP1 = 20; #how many maxima (software check)
   INTERVALCHECKRIGHTP1 = 15; #how far right of the maxima should the algorithm check for minima
   INTERVALCHECKLEFTP1 = 0; #how far left to check(usually 0)
   HOWFARAPARTP1 = 65;
+  %}
 #^^^^^^ User Input ^^^^^^
 
 dataP0 = csvread(FILENAMEP0);
@@ -146,7 +168,7 @@ fprintf('%s\n%d\n', "Standard Deviation", FinalMaximaStd);
 if(USERESTIMATEFORMAXIMAP0 == length(FinalMaxima) && USERESTIMATEFORMAXIMAP1 == length(FinalMaxima))
   fprintf("\n\n%s\n", "CORRECT SOFTWARE\n");
 else
-  fprintf("\n\n%s\n", "INCORRECT SOFTWARE\n");
+  fprintf("\n\n%s\n", "INCORRECT SOFTWARE\n ");
 end
 
 dlmwrite("Results.csv", "LocalMinimaDifferences");
