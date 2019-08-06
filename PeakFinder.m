@@ -2,10 +2,12 @@
   fflush(stdout);
   
   disp("Press Ctrl-C to Quit and then type PeakFinder and press enter to restart\n");
-  FILENAMEP0 = input("Type exact filename for P0 on: ", "s"); 
-  FILENAMEP1 = input("Type exact filename for P1 on: ", "s");
-  FILENAMEOFFP0 = input("Type exact filename for P0 off: ", "s");
-  FILENAMEOFFP1 = input("Type exact filename for P1 off: ","s");
+  FILENAMEON = input("Type exact filename for pump on: ", "s"); 
+  FILENAMEOFF = input("Type exact filename for pump off: ", "s");
+  LASTROWNUMBER = input("Last row number in pump on: ");
+  LASTROWNUMBEROFF = input("Last row number in pump off: ");
+  #FILENAMEOFFP0 = input("Type exact filename for P0 off: ", "s");
+  # FILENAMEOFFP1 = input("Type exact filename for P1 off: ","s");
  %{ 
   FILENAMEP0 = "c1278P0.csv";
   FILENAMEP1 = "c1278P1.csv";
@@ -39,10 +41,19 @@
   %}
 #^^^^^^ User Input ^^^^^^
 
-dataP0 = csvread(FILENAMEP0);
-dataP1 = csvread(FILENAMEP1);
-dataOffP0 = csvread(FILENAMEOFFP0);
-dataOffP1 = csvread(FILENAMEOFFP1);
+#dataP0 = csvread(FILENAMEP0);
+#dataP1 = csvread(FILENAMEP1);
+#dataOffP0 = csvread(FILENAMEOFFP0);
+#dataOffP1 = csvread(FILENAMEOFFP1);
+range1 = strcat("A2:A",mat2str(LASTROWNUMBER));  
+range2 = strcat("B2:B",mat2str(LASTROWNUMBER));
+range3 = strcat("A2:A",mat2str(LASTROWNUMBEROFF));
+range4 = strcat("B2:B",mat2str(LASTROWNUMBEROFF));
+dataP0 = xlsread(FILENAMEON, 'sheet1', range1);
+dataP1 = xlsread(FILENAMEON, 'sheet1', range2);
+dataOffP0 = xlsread(FILENAMEOFF, 'sheet1',  range3);
+dataOffP1 = xlsread(FILENAMEOFF, 'sheet1', range4);
+
 dataOffP0 = sort(dataOffP0);
 dataOffP1 = sort(dataOffP1);
 dataOffFilteredP0 = [];
