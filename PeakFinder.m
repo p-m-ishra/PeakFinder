@@ -1,44 +1,25 @@
   #Use Figure 1 for P0 and Figure 2 for P1
   fflush(stdout);
   
+  #Follow along in the comments for a test run
   disp("Press Ctrl-C to Quit and then type PeakFinder and press enter to restart\n");
-  FILENAMEON = input("Type exact filename for pump on: ", "s"); 
-  FILENAMEOFF = input("Type exact filename for pump off: ", "s");
-  LASTROWNUMBER = input("Last row number in pump on: ");
-  LASTROWNUMBEROFF = input("Last row number in pump off: ");
-  #FILENAMEOFFP0 = input("Type exact filename for P0 off: ", "s");
-  # FILENAMEOFFP1 = input("Type exact filename for P1 off: ","s");
- %{ 
-  FILENAMEP0 = "c1278P0.csv";
-  FILENAMEP1 = "c1278P1.csv";
-  FILENAMEOFFP0 = "c1278P0off.csv";
-  FILENAMEOFFP1 = "c1278P1off.csv";
-%}
-  REQUIREMENTFORLOCALMAXP0 = input("Requirement for Local Max P0 (how high peak must be to be local max): ");
-  USERESTIMATEFORMAXIMAP0 = input("How many maxima are there (software check) in P0: ");
-  INTERVALCHECKRIGHTP0 = input("How far right of maxima should algorithm check for minima in P0: ");
+  FILENAMEON = input("Type exact filename for pump on: ", "s"); #c1278 rest pump on.xlsx
+  FILENAMEOFF = input("Type exact filename for pump off: ", "s");#c1278 rest pump off.xlsx
+  LASTROWNUMBER = input("Last row number in pump on: "); #1421
+  LASTROWNUMBEROFF = input("Last row number in pump off: "); #1271
+
+  REQUIREMENTFORLOCALMAXP0 = input("Requirement for Local Max P0 (how high peak must be to be local max): "); #0.0004
+  USERESTIMATEFORMAXIMAP0 = input("How many maxima are there (software check) in P0: "); #20
+  INTERVALCHECKRIGHTP0 = input("How far right of maxima should algorithm check for minima in P0: "); #15
   INTERVALCHECKLEFTP0 = 0;
-  HOWFARAPARTP0 = input("How far apart are maxima approximately? (Round down) in P0: ");
+  HOWFARAPARTP0 = input("How far apart are maxima approximately? (Round down) in P0: "); #65
   
-  REQUIREMENTFORLOCALMAXP1 = input("Requirement for Local Max P1 (how high peak must be to be local max): ");
-  USERESTIMATEFORMAXIMAP1 = input("How many maxima are there in P1(software check): ");
-  INTERVALCHECKRIGHTP1 = input("How far right of maxima should algorithm check for minima in P1: ");
+  REQUIREMENTFORLOCALMAXP1 = input("Requirement for Local Max P1 (how high peak must be to be local max): "); #0.00027
+  USERESTIMATEFORMAXIMAP1 = input("How many maxima are there in P1(software check): "); #20
+  INTERVALCHECKRIGHTP1 = input("How far right of maxima should algorithm check for minima in P1: "); #15
   INTERVALCHECKLEFTP1 = 0;
-  HOWFARAPARTP1 = input("How far apart are maxima approximately in P1? (Round down): ");
-  %{
-  REQUIREMENTFORLOCALMAXP0 = 0.0004; #how high must a peak be to be a local max
-  USERESTIMATEFORMAXIMAP0 = 20; #how many maxima (software check)
-  INTERVALCHECKRIGHTP0 = 15; #how far right of the maxima should the algorithm check for minima
-  INTERVALCHECKLEFTP0 = 0; #how far left to check(usually 0)
-  HOWFARAPARTP0 = 65;
-  %}
-  %{
-  REQUIREMENTFORLOCALMAXP1 = 0.00027; #how high must a peak be to be a local max
-  USERESTIMATEFORMAXIMAP1 = 20; #how many maxima (software check)
-  INTERVALCHECKRIGHTP1 = 15; #how far right of the maxima should the algorithm check for minima
-  INTERVALCHECKLEFTP1 = 0; #how far left to check(usually 0)
-  HOWFARAPARTP1 = 65;
-  %}
+  HOWFARAPARTP1 = input("How far apart are maxima approximately in P1? (Round down): "); #65
+
 #^^^^^^ User Input ^^^^^^
 
 #dataP0 = csvread(FILENAMEP0);
@@ -190,11 +171,3 @@ dlmwrite("Results.csv", "LocalMaximaDifferences", '-append');
 dlmwrite("Results.csv", FinalMaxima, '-append');
 dlmwrite("Results.csv", FinalMaximaAvg, '-append');
 dlmwrite("Results.csv", FinalMaximaStd, '-append');
-%{
-dlmwrite("Results.csv", "LocalMinimaList, Avg,and Standard Deviation <-- in that order");
-dlmwrite("Results.csv", LocalMinima, '-append');
-dlmwrite("Results.csv", LocalMinimaStats, '-append');
-dlmwrite("Results.csv", "LocalMaximaList, Avg,and Standard Deviation <-- in that order", '-append');
-dlmwrite("Results.csv", LocalMaxima, '-append');
-dlmwrite("Results.csv", LocalMaximaStats, '-append');
-%}
